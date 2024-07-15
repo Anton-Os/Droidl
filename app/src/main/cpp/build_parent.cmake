@@ -1,5 +1,3 @@
-
-
 if(EXISTS ${Topl_Source_Path}/CmakeLists.txt)
     message("Building Topl...")
 

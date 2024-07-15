@@ -1,4 +1,4 @@
-#include "Topl_Renderer_GL4.hpp"
+#include "Topl_Renderer.hpp"
 
 class Droidl_Renderer : public Topl_Renderer { // TODO: Inherit from Topl_Renderer
 public:
@@ -45,5 +45,4 @@ private:
     GLuint _textureSlots[GL4_TEXTURE_BINDINGS_MAX]; // stores all textures
     unsigned _textureIndex = 0; // increments to indicate next available texture slot
     std::vector<Texture_GL4> _textures; // active textures */
-
 };
