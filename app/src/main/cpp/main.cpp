@@ -6,15 +6,11 @@
 #include <game-text-input/gametextinput.cpp>
 #include <game-activity/native_app_glue/android_native_app_glue.c>
 
-// #include "Platform.hpp"
+#include "Platform.hpp"
+#include "Droidl_Renderer.hpp"
 
 extern "C" {
 
-/*!
- * Handles commands sent to this Android application
- * @param pApp the app the commands are coming from
- * @param cmd the command to handle
- */
 void handle_cmd(android_app *app, int32_t cmd) {
     switch (cmd) {
         case APP_CMD_INIT_WINDOW: break;
@@ -22,32 +18,25 @@ void handle_cmd(android_app *app, int32_t cmd) {
         default: break;
     }
 }
-
-/*!
- * Enable the motion events you want to handle; not handled events are
- * passed back to OS for further processing. For this example case,
- * only pointer and joystick devices are enabled.
- *
- * @param motionEvent the newly arrived GameActivityMotionEvent.
- * @return true if the event is from a pointer or joystick device,
- *         false for all other input devices.
- */
 bool motion_event_filter_func(const GameActivityMotionEvent *motionEvent) {
     auto sourceClass = motionEvent->source & AINPUT_SOURCE_CLASS_MASK;
     return (sourceClass == AINPUT_SOURCE_CLASS_POINTER ||
             sourceClass == AINPUT_SOURCE_CLASS_JOYSTICK);
 }
 
-/*!
- * This the main entry point for a native activity
- */
 void android_main(struct android_app *pApp) {
     // Can be removed, useful to ensure your code is running
-    std::cout << "Welcome to android_main" << std::endl;
+    LOGI("welcome to Android main");
 
     pApp->onAppCmd = handle_cmd;
 
     android_app_set_motion_event_filter(pApp, motion_event_filter_func);
+
+    // TODO: Platform should be created here
+    NATIVE_PLATFORM_CONTEXT context;
+    context.window = pApp->window;
+    context.eglCtx = eglGetCurrentContext();
+    Droidl_Renderer* renderer = new Droidl_Renderer(&context);
 
     // This sets up a typical game/event loop. It  will run until the app is destroyed.
     int events;
@@ -60,7 +49,10 @@ void android_main(struct android_app *pApp) {
             }
         }
 
-        if (pApp->userData) std::cout << "Handling user data" << std::endl;
+        renderer->clear();
+
+        if (pApp->userData) LOGI("Handling user data");
+        // else LOGI("Handling running data");
     } while (!pApp->destroyRequested);
 }
 }

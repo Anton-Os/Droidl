@@ -1,21 +1,8 @@
 cmake_minimum_required(VERSION 3.18.1)
 project(Droidl)
 
-set(Topl_Src_Path "/home/antonos/Documents/Codex/Topl" CACHE PATH "Topl source directory" FORCE)
-set(Topl_Install_Path "/home/antonos/Documents/Codex/Topl/BUILD_UNIX/INSTALL" CACHE PATH "Topl install directory" FORCE)
-set(Topl_DIR "/home/antonos/Documents/Codex/Topl/BUILD_UNIX/INSTALL/lib/Topl")
-
-find_package(Topl REQUIRED PATHS "${Topl_Install_Path}/lib/Topl" NO_DEFAULT_PATH)
-if(Topl_FOUND)
-    message(STATUS "Topl loading success")
-    # set(Topl_Found_Status TRUE CACHE BOOL FORCE)
-else()
-    message(STATUS "Topl loading failure")
-    # set(Topl_Found_Status FALSE CACHE BOOL FORCE) # Uncomment for error
-endif()
-
 # set(Topl_Source_Path "C:/AntonDocs/Codex/Ao-Project/Topl/master" CACHE PATH "Topl source directory" FORCE)
-# include(build_parent.cmake)
+# include(build_targets.cmake)
 
 # Droidl Build Script
 
@@ -35,17 +22,47 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=gnu++11 -Wall -Werror")
 find_package(game-activity REQUIRED CONFIG)
 set(CMAKE_SHARED_LINKER_FLAGS
     "${CMAKE_SHARED_LINKER_FLAGS} -u \
-    Java_com_google_androidgamesdk_GameActivity_initializeNativeCode"
+    JavDroidl_com_google_androidgamesdk_GameActivity_initializeNativeCode"
 )
 
-add_library(droidl SHARED main.cpp)
+add_library(droidl SHARED
+        Droidl_Renderer.cpp
+        # Droidl_Pipeline.cpp
+        main.cpp
+)
 
 target_include_directories(droidl
     PRIVATE
     ${ANDROID_NDK}/sources/android/native_app_glue
 )
 
-if(Topl_Found)
+if (${ANDROID_PLATFORM_LEVEL} LESS 18)
+set(OPENGL_LIB GLESv2)
+else ()
+set(OPENGL_LIB GLESv3)
+endif()
+
+# add lib dependencies
+target_link_libraries(droidl
+    android
+    # native_app_glue
+    game-activity::game-activity_static
+    vulkan
+    EGL
+    ${OPENGL_LIB}
+    # GLESv1_CM
+    log
+)
+
+set(Topl_Src_Path "/home/antonos/Documents/Codex/Topl" CACHE PATH "Topl source directory" FORCE)
+set(Topl_Install_Path "/home/antonos/Documents/Codex/Topl/BUILD_UNIX/INSTALL" CACHE PATH "Topl install directory" FORCE)
+set(Topl_DIR "/home/antonos/Documents/Codex/Topl/BUILD_UNIX/INSTALL/lib/Topl")
+
+find_package(Topl REQUIRED PATHS "${Topl_Install_Path}/lib/Topl" NO_DEFAULT_PATH)
+if(Topl_FOUND)
+    message(STATUS "Topl loading success")
+    # set(Topl_Found_Status TRUE CACHE BOOL FORCE)
+
     file(GLOB_RECURSE parentHeaders
         ${Topl_Src_Path}/core/*.hpp
         ${Topl_Src_Path}/support/*.hpp
@@ -62,27 +79,10 @@ if(Topl_Found)
         ${Topl_Src_Path}/support
         ${Topl_Src_Path}/shaders
     )
+
+    include(build_targets.cmake)
+else()
+    message(SEND_ERROR "Topl loading failure")
+    # set(Topl_Found_Status FALSE CACHE BOOL FORCE)
 endif()
-
-# add lib dependencies
-target_link_libraries(droidl
-    android
-    # native_app_glue
-    game-activity::game-activity_static
-    vulkan
-    EGL
-    GLESv1_CM
-    log
-)
-
-if(Topl_Found)
-    target_link_libraries(droidl
-        CORELIB
-        GEOLIB
-    )
-
-    # target_link_libraries(droidl GL4_ENGINE)
-    # target_link_libraries(droidl Vulkan_ENGINE)
-endif()
-
 
