@@ -2,7 +2,7 @@ file(GLOB_RECURSE support_src ${Topl_Src_Path}/support/*.cpp)
 file(GLOB core_src ${Topl_Src_Path}/core/*.cpp ${Topl_Src_Path}/core/program/*.cpp)
 
 add_library(Droidl_CORELIB ${support_src} ${core_src}) # Core Library
-target_include_directories(Droidl_CORELIB PUBLIC ${CMAKE_BINARY_DIR})
+target_include_directories(Droidl_CORELIB PUBLIC ${CMAKE_BINARY_DIR} ${ANDROID_NDK}/sources/android/native_app_glue)
 target_include_directories(Droidl_CORELIB PRIVATE ${Topl_Src_Path}/core ${Topl_Src_Path}/support ${Topl_Src_Path}/geometry ${Topl_Src_Path}/shaders "${CMAKE_INSTALL_PREFIX}/include")
 set_target_properties(Droidl_CORELIB PROPERTIES CXX_STANDARD 11 CXX_STANDARD_REQUIRED ON CXX_EXTENSIONS ON)
 # target_include_directories(CORELIB

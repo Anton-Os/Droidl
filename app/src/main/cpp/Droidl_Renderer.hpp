@@ -2,9 +2,28 @@
 
 #include "backends/opengl/Topl_Renderer_GL4.hpp"
 
+#ifndef LOGI
+#define LOGI(...) \
+    ((void)logMessage(__VA_ARGS__))
+#endif
+#ifndef LOGE
+#define LOGE(...) \
+    ((void)logMessage(MESSAGE_Exclaim, __VA_ARGS__))
+#endif
+
+namespace EGL {
+    std::string getError(GLint error);
+}
+
 class Droidl_Renderer : public Topl_Renderer_GL4 {
 public:
-    Droidl_Renderer(NATIVE_PLATFORM_CONTEXT* context) : Topl_Renderer_GL4(context) {}
+    Droidl_Renderer(NATIVE_PLATFORM_CONTEXT* context) : Topl_Renderer_GL4(context) {
+        _flags[DRAW_ORDER_BIT] = DRAW_NORMAL;
+        init(context->window);
+
+        setViewport(&_defaultViewport); // viewport creation
+        setDrawMode(DRAW_Triangles);
+    }
     virtual ~Droidl_Renderer();
 
     void draw(const Geo_Actor* actor) override;
@@ -24,18 +43,8 @@ protected:
     void attachTexAt(const Rasteron_Image* image, unsigned renderID, unsigned binding) override;
 	void attachTex3D(const Img_Volume* volumeTex, unsigned id) override;
 #endif
-    Topl_Pipeline_GL4* _pipeline;
-
-    std::map<unsigned long, VertexArray_GL4> _vertexArrayMap;
-    std::map<unsigned long, Buffer_GL4> _vertexBufferMap, _indexBufferMap, _blockBufferMap;
-    std::vector<Texture_GL4> _textures; // active textures
-    std::map<unsigned long, Texture_GL4[MAX_TEX_BINDINGS + 2]> _textureMap; // TODO: Change to this type
-// private:
-    GLenum _drawMode_GL4; // OpenGL specific draw mode
-    GLuint* _bufferSlots;
-    unsigned _bufferIndex = 0; // increments to indicate next available buffer slot
-    GLuint* _vertexArraySlots;
-    unsigned _vertexArrayIndex = 0; // increments to indicate next available vertex array slot
-    GLuint* _textureSlots;
-    unsigned _textureIndex = 0; // increments to indicate next available texture slot
+    std::string getLastError() const { return EGL::getError(errorCode); }
+private:
+    std::pair<int, int> eglVersion;
+    EGLint errorCode;
 };

@@ -49,7 +49,7 @@ target_link_libraries(droidl
     game-activity::game-activity_static
     vulkan
     EGL
-    ${OPENGL_LIB}
+    GLESv3 # ${OPENGL_LIB}
     # GLESv1_CM
     log
 )

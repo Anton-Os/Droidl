@@ -1,5 +1,29 @@
 #include "Droidl_Renderer.hpp"
 
+#include <assert.h>
+
+namespace EGL {
+    std::string getError(GLint error){
+        switch(error){
+            case EGL_NOT_INITIALIZED: return "EGL not initialized or failed to initialize";
+            case EGL_BAD_ACCESS: return "Resource inaccessible";
+            case EGL_BAD_ALLOC: return "Cannot allocate resources";
+            case EGL_BAD_ATTRIBUTE: return "Unrecognized attribute or attribute value";
+            case EGL_BAD_CONTEXT: return "Invalid EGL context";
+            case EGL_BAD_CONFIG: return "Invalid EGL frame buffer configuration";
+            case EGL_BAD_CURRENT_SURFACE: return "Current surface is no longer valid";
+            case EGL_BAD_DISPLAY: return "Invalid EGL display";
+            case EGL_BAD_SURFACE: return "Invalid surface";
+            case EGL_BAD_MATCH: return "Inconsistent arguments";
+            case EGL_BAD_PARAMETER: return "Invalid argument";
+            case EGL_BAD_NATIVE_PIXMAP: return "Invalid native pixmap";
+            case EGL_BAD_NATIVE_WINDOW: return "Invalid native window";
+            case EGL_CONTEXT_LOST: return "Context lost";
+            default: return "Success!";
+        }
+    }
+}
+
 Droidl_Renderer::~Droidl_Renderer() {
     /* glDeleteBuffers(MAX_RENDERID, _bufferSlots);
     glDeleteVertexArrays(MAX_RENDERID, _vertexArraySlots);
@@ -8,58 +32,76 @@ Droidl_Renderer::~Droidl_Renderer() {
 }
 
 void Droidl_Renderer::init(NATIVE_WINDOW window) {
-    logMessage("init triggered");
+    LOGI("init triggered");
 
     int configCount;
-    EGLint const eglAttribs[] = {
-        EGL_RED_SIZE, 1,
-        EGL_GREEN_SIZE, 1,
-        EGL_BLUE_SIZE, 1,
+    GLint const eglAttribs[] = {
+        EGL_SURFACE_TYPE,   EGL_WINDOW_BIT,
+        EGL_RED_SIZE,       8,
+        EGL_GREEN_SIZE,     8,
+        EGL_BLUE_SIZE,      8,
+        EGL_ALPHA_SIZE,     8,
+        EGL_DEPTH_SIZE,     24,
+        EGL_STENCIL_SIZE,   8,
+        EGL_SAMPLE_BUFFERS, 1,
+        EGL_SAMPLES,        0,
         EGL_NONE
     };
 
+    eglBindAPI(EGL_OPENGL_ES_API);
     _platformCtx->display = eglGetDisplay(EGL_DEFAULT_DISPLAY);
-    eglInitialize(_platformCtx->display, NULL, NULL);
+    eglInitialize(_platformCtx->display, &eglVersion.first, &eglVersion.second);
     eglChooseConfig(_platformCtx->display, eglAttribs, &_platformCtx->config, 1, &configCount);
+    errorCode = eglGetError(); if(errorCode != EGL_SUCCESS) LOGE(EGL::getError(errorCode));
 
-    _platformCtx->window = window;
-    _platformCtx->surface = eglCreateWindowSurface(_platformCtx->display, _platformCtx->config, _platformCtx->window, NULL);
+    /* EGLint const ctxAttribs[] = {
+        EGL_CONTEXT_MAJOR_VERSION,          3,
+        EGL_CONTEXT_MINOR_VERSION,          0,
+        // EGL_CONTEXT_OPENGL_ROBUST_ACCESS,   EGL_TRUE,
+        EGL_NONE
+    }; */
+
+    _platformCtx->surface = eglCreateWindowSurface(_platformCtx->display, _platformCtx->config, window, NULL);
+   // _platformCtx->eglCtx = eglGetCurrentContext();
+    _platformCtx->eglCtx = eglCreateContext(_platformCtx->display, _platformCtx->config, EGL_NO_CONTEXT, NULL);
     eglMakeCurrent(_platformCtx->display, _platformCtx->surface, _platformCtx->surface, _platformCtx->eglCtx);
+    errorCode = eglGetError(); if(errorCode != EGL_SUCCESS) LOGE(EGL::getError(errorCode));
 
     Topl_Renderer_GL4::init(window);
 }
 
 void Droidl_Renderer::clear() {
-    logMessage("clear triggered");
+    LOGI("clear triggered");
     Topl_Renderer_GL4::clear();
 }
 
 void Droidl_Renderer::setViewport(const Topl_Viewport* viewport) {
-    logMessage("set viewport triggered");
+    LOGI("set viewport triggered");
     Topl_Renderer_GL4::setViewport(viewport);
 }
 
 void Droidl_Renderer::swapBuffers(double frameTime) {
-    // eglSwapBuffers() // TODO: Perform Swap buffers for EGL
+    LOGI("swapping buffers");
+    eglSwapBuffers(_platformCtx->display, _platformCtx->surface);
 }
 
 void Droidl_Renderer::build(const Geo_Actor* actor){
-    logMessage("build triggered");
+    LOGI("build triggered");
     Topl_Renderer_GL4::build(actor);
 }
 
 void Droidl_Renderer::update(const Geo_Actor* actor){
-    logMessage("update triggered");
+    LOGI("update triggered");
     Topl_Renderer_GL4::update(actor);
 }
 
 void Droidl_Renderer::setDrawMode(enum DRAW_Mode mode) {
-    logMessage("set draw mode triggered");
+    LOGI("set draw mode triggered");
     Topl_Renderer_GL4::setDrawMode(mode);
 }
 
 void Droidl_Renderer::draw(const Geo_Actor* actor) {
-    logMessage("draw triggered");
+    LOGI("draw triggered");
     Topl_Renderer_GL4::draw(actor);
 }
 
