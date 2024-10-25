@@ -1,6 +1,4 @@
-#include "Topl_Renderer.hpp"
-
-#include "backends/opengl/Topl_Renderer_GL4.hpp"
+#include "renderer/opengl/Topl_Renderer_GL4.hpp"
 
 #ifndef LOGI
 #define LOGI(...) \
@@ -21,7 +19,7 @@ public:
         _flags[DRAW_ORDER_BIT] = DRAW_NORMAL;
         init(context->window);
 
-        setViewport(&_defaultViewport); // viewport creation
+        // setViewport(&_defaultViewport); // viewport creation
         setDrawMode(DRAW_Triangles);
     }
     virtual ~Droidl_Renderer();

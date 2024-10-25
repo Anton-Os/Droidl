@@ -1,5 +1,9 @@
 file(GLOB_RECURSE support_src ${Topl_Src_Path}/support/*.cpp)
-file(GLOB core_src ${Topl_Src_Path}/core/*.cpp ${Topl_Src_Path}/core/program/*.cpp)
+file(GLOB core_src
+        ${Topl_Src_Path}/core/*.cpp
+        ${Topl_Src_Path}/core/program/*.cpp
+        ${Topl_Src_Path}/core/renderer/*.cpp
+)
 
 add_library(Droidl_CORELIB ${support_src} ${core_src}) # Core Library
 target_include_directories(Droidl_CORELIB PUBLIC ${CMAKE_BINARY_DIR} ${ANDROID_NDK}/sources/android/native_app_glue)
@@ -12,8 +16,8 @@ set_target_properties(Droidl_CORELIB PROPERTIES CXX_STANDARD 11 CXX_STANDARD_REQ
 # )
 
 add_library(Droidl_GL4_ENGINE
-        ${Topl_Src_Path}/core/backends/opengl/Topl_Pipeline_GL4.cpp
-        ${Topl_Src_Path}/core/backends/opengl/Topl_Renderer_GL4.cpp
+        ${Topl_Src_Path}/core/renderer/opengl/Topl_Pipeline_GL4.cpp
+        ${Topl_Src_Path}/core/renderer/opengl/Topl_Renderer_GL4.cpp
 )
 target_include_directories(Droidl_GL4_ENGINE PRIVATE ${Topl_Src_Path}/core ${Topl_Src_Path}/support ${Topl_Src_Path}/geometry)
 # target_include_directories(GL4_ENGINE INTERFACE

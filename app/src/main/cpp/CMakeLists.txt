@@ -54,23 +54,14 @@ target_link_libraries(droidl
     log
 )
 
-set(Topl_Src_Path "/home/antonos/Documents/Codex/Topl" CACHE PATH "Topl source directory" FORCE)
-set(Topl_Install_Path "/home/antonos/Documents/Codex/Topl/BUILD_UNIX/INSTALL" CACHE PATH "Topl install directory" FORCE)
-set(Topl_DIR "/home/antonos/Documents/Codex/Topl/BUILD_UNIX/INSTALL/lib/Topl")
+set(Topl_Src_Path "/home/antonos/Documents/Codex/Topl_New" CACHE PATH "Topl source directory" FORCE)
+set(Topl_Install_Path "/home/antonos/Documents/Codex/Topl_New/BUILD_UNIX/INSTALL" CACHE PATH "Topl install directory" FORCE)
+set(Topl_DIR "/home/antonos/Documents/Codex/Topl_New/BUILD_UNIX/INSTALL/lib/Topl")
 
-find_package(Topl REQUIRED PATHS "${Topl_Install_Path}/lib/Topl" NO_DEFAULT_PATH)
-if(Topl_FOUND)
+# find_package(Topl REQUIRED PATHS "${Topl_Install_Path}/lib/Topl" NO_DEFAULT_PATH)
+if(TRUE) # Topl_FOUND)
     message(STATUS "Topl loading success")
     # set(Topl_Found_Status TRUE CACHE BOOL FORCE)
-
-    file(GLOB_RECURSE parentHeaders
-        ${Topl_Src_Path}/core/*.hpp
-        ${Topl_Src_Path}/support/*.hpp
-        ${Topl_Src_Path}/geometry/*.hpp
-        ${Topl_Src_Path}/shaders/*.hpp
-    )
-
-    message(STATUS "Parent headers are ${parentHeaders}")
 
     target_include_directories(droidl
         PUBLIC
