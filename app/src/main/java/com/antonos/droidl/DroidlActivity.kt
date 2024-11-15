@@ -6,7 +6,7 @@ import com.google.androidgamesdk.GameActivity
 class DroidlActivity : GameActivity() {
     companion object {
         init {
-            System.loadLibrary("droidl")
+            System.loadLibrary("Droidl")
         }
     }
 

@@ -25,13 +25,13 @@ set(CMAKE_SHARED_LINKER_FLAGS
     JavDroidl_com_google_androidgamesdk_GameActivity_initializeNativeCode"
 )
 
-add_library(droidl SHARED
+add_library(Droidl SHARED
         Droidl_Renderer.cpp
         # Droidl_Pipeline.cpp
         main.cpp
 )
 
-target_include_directories(droidl
+target_include_directories(Droidl
     PRIVATE
     ${ANDROID_NDK}/sources/android/native_app_glue
 )
@@ -43,7 +43,7 @@ set(OPENGL_LIB GLESv3)
 endif()
 
 # add lib dependencies
-target_link_libraries(droidl
+target_link_libraries(Droidl
     android
     # native_app_glue
     game-activity::game-activity_static
@@ -57,13 +57,20 @@ target_link_libraries(droidl
 set(Topl_Src_Path "/home/antonos/Documents/Codex/Topl_New" CACHE PATH "Topl source directory" FORCE)
 set(Topl_Install_Path "/home/antonos/Documents/Codex/Topl_New/BUILD_UNIX/INSTALL" CACHE PATH "Topl install directory" FORCE)
 set(Topl_DIR "/home/antonos/Documents/Codex/Topl_New/BUILD_UNIX/INSTALL/lib/Topl")
+if(SUPPORT_TEXTURES)
+    set(Rasteron_Install_Path "/home/antonos/Documents/Codex/Rasteron_New/BUILD_UNIX/INSTALL/include/Rasteron")
+    target_include_directories(Droidl
+        PUBLIC
+        ${Rasteron_Install_Path}
+    )
+endif()
 
 # find_package(Topl REQUIRED PATHS "${Topl_Install_Path}/lib/Topl" NO_DEFAULT_PATH)
 if(TRUE) # Topl_FOUND)
     message(STATUS "Topl loading success")
     # set(Topl_Found_Status TRUE CACHE BOOL FORCE)
 
-    target_include_directories(droidl
+    target_include_directories(Droidl
         PUBLIC
         ${Topl_Src_Path}/core
         ${Topl_Src_Path}/geometry

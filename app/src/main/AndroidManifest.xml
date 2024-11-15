@@ -23,7 +23,7 @@
 
             <meta-data
                 android:name="android.app.lib_name"
-                android:value="droidl" />
+                android:value="Droidl" />
         </activity>
     </application>
 

@@ -52,7 +52,7 @@ void Droidl_Renderer::init(NATIVE_WINDOW window) {
     _platformCtx->display = eglGetDisplay(EGL_DEFAULT_DISPLAY);
     eglInitialize(_platformCtx->display, &eglVersion.first, &eglVersion.second);
     eglChooseConfig(_platformCtx->display, eglAttribs, &_platformCtx->config, 1, &configCount);
-    errorCode = eglGetError(); if(errorCode != EGL_SUCCESS) LOGE(EGL::getError(errorCode));
+    // errorCode = eglGetError(); if(errorCode != EGL_SUCCESS) LOGE(EGL::getError(errorCode));
 
     /* EGLint const ctxAttribs[] = {
         EGL_CONTEXT_MAJOR_VERSION,          3,
@@ -65,7 +65,7 @@ void Droidl_Renderer::init(NATIVE_WINDOW window) {
    // _platformCtx->eglCtx = eglGetCurrentContext();
     _platformCtx->eglCtx = eglCreateContext(_platformCtx->display, _platformCtx->config, EGL_NO_CONTEXT, NULL);
     eglMakeCurrent(_platformCtx->display, _platformCtx->surface, _platformCtx->surface, _platformCtx->eglCtx);
-    errorCode = eglGetError(); if(errorCode != EGL_SUCCESS) LOGE(EGL::getError(errorCode));
+    // errorCode = eglGetError(); if(errorCode != EGL_SUCCESS) LOGE(EGL::getError(errorCode));
 
     Topl_Renderer_GL4::init(window);
 }
