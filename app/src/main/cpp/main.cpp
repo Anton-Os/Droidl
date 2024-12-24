@@ -9,12 +9,19 @@
 #include "Droidl_Renderer.hpp"
 
 #include "Idle_Shader.hpp"
+#include "meshes/Geo_Surface.hpp"
 
 extern "C" {
 
 Idle_VertexShader_GL4 vertexShader;
 Idle_PixelShader_GL4 pixelShader;
 GL4::Pipeline pipeline;
+
+
+static Geo_Trig2D triangle;
+static Geo_Actor actor = Geo_Actor((Geo_Mesh*)&triangle);
+
+static Topl_Scene scene = Topl_Scene({ &actor });
 
 MAIN_ENTRY {
     // Can be removed, useful to ensure your code is running
@@ -28,11 +35,14 @@ MAIN_ENTRY {
             platform.awaitWindow();
             if(platform.getParentWindow() != nullptr){
                 renderer = new Droidl_Renderer(platform.getContext());
-                // renderer->genPipeline(&pipeline, &vertexShader, &pixelShader);
+                renderer->genPipeline(&pipeline, &vertexShader, &pixelShader);
+                renderer->buildScene(&scene);
             }
         } else if(renderer != nullptr) {
             renderer->clear();
-            renderer->swapBuffers(0.0);
+            renderer->update(&actor);
+            renderer->draw(&actor);
+            renderer->present();
         }
     }
 

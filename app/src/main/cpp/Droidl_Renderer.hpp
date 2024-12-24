@@ -25,18 +25,17 @@ public:
     virtual ~Droidl_Renderer();
 
     void draw(const Geo_Actor* actor) override;
+    void update(const Geo_Actor* actor) override;
     void clear() override;
     void setViewport(const Topl_Viewport* viewport) override;
-    void swapBuffers(double frameTime) override;
     void setDrawMode(enum DRAW_Mode mode) override;
-
 #ifdef RASTERON_H
     Img_Base frame() override;
 #endif
 protected:
     void init(NATIVE_WINDOW window) override;
-    void update(const Geo_Actor* actor) override;
     void build(const Geo_Actor* actor) override;
+    void swapBuffers(double frameTime) override;
 #ifdef RASTERON_H
     void attachTexAt(const Rasteron_Image* image, unsigned renderID, unsigned binding) override;
 	void attachTex3D(const Img_Volume* volumeTex, unsigned id) override;
